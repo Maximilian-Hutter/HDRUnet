@@ -12,7 +12,7 @@ from tensorboardX import SummaryWriter
 from Loss import Tanh_Loss
 
 from utils import load_checkpoint, save_checkpoint, ensure_dir
-from HDRUnet import HDRUnet
+from HDRModel import HDRUnet
 from Models import Conditionalnet, WeightEstimationNet
 
 # set flags / seeds
@@ -88,7 +88,9 @@ if __name__ == '__main__':
             prepare_time = start_time-time.time()
             
             # forward and backward pass
-            gen_hdr = HDRnet(ldr)
+            BaseSFT, Down1SFT, Down2SFT = Conditionalnet(ldr)
+            weightestim = WeightEstimationNet(ldr)
+            gen_hdr = HDRnet(ldr,BaseSFT, Down1SFT, Down2SFT, weightestim)
             loss = criterion_hdr(gen_hdr, hdr)
             optim.zero_grad()
             optim_Con.zero_grad()
